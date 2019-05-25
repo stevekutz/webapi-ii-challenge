@@ -44,6 +44,30 @@ router.get('/:id', async (req, res) => {
     }
   });
 
+// GET post objects comments
+router.get('/:id/comments', async (req, res) =>{
+    const {id} = req.params;
+
+    try{
+        const comments = await Posts.findPostComments(id);
+
+        if(comments.length) {
+            res.json(comments);
+        } else {
+            res.status(404).json({
+                err: "The post with the specified ID does not exist"
+            })
+        }
+    } catch(err) {
+        res.status(500).json({
+            error: "The comments information could not be retrieved"});
+    }
+
+});
+
+
+
+
 // POST create new post from as packaged via request body
 router.post('/', async (req, res) => {
     
@@ -71,7 +95,21 @@ router.post('/', async (req, res) => {
 
 
 // POST create new comment for post obj with speific id as packaged via request body
-
+router.post('/:id/comments', async (req, res) => {
+    const commentInfo = {...req.body, id: req.params.id };
+  
+  
+    try {
+      const saved =  await Posts.insertComment(commentInfo);
+      res.status(201).json(saved);
+    } catch (err) {
+      res.status(500).json({
+        message: 'failed to saved message',
+        err
+      })
+    }
+  
+  });
 
 
 // DELETE(tricky,extra calls!) Removes post with specified id and RETURNS deleted post 

@@ -14,7 +14,7 @@ const router = express.Router();
 // GET post obj array
 router.get('/', async (req, res) => {
     try {
-      const posts = await Hubs.find(req.query);
+      const posts = await Posts.find(req.query);
       res.status(200).json(posts);
     } catch (error) {
       // log error to database

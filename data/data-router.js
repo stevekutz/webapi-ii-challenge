@@ -26,7 +26,23 @@ router.get('/', async (req, res) => {
   });
 
 // GET post obj with specific id
-
+router.get('/:id', async (req, res) => {
+    try {
+      const post = await Posts.findById(req.params.id); // modify Posts to get 500 err
+      
+      if (post.length) { // HAD to add this to get 404 to show up, was getting 200 & [] for bad id
+        res.status(200).json(post);
+      } else {
+        res.status(404).json({ message: 'The post with the specified id does not exist' });
+      }
+    } catch (error) {
+      // log error to database
+      console.log(error);
+      res.status(500).json({
+        message: 'The post information could not be retrieved',
+      });
+    }
+  });
 
 
 // GET all comments of post obj with specific id

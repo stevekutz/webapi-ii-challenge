@@ -14,13 +14,13 @@ const router = express.Router();
 // GET post obj array
 router.get('/', async (req, res) => {
     try {
-      const posts = await Posts.find(req.query);
+      const posts = await Posts.find(req.query);   // modify Posts to get 500 err 
       res.status(200).json(posts);
     } catch (error) {
       // log error to database
       console.log(error);
       res.status(500).json({
-        message: 'Error retrieving the posts',
+        error: 'The posts information could not be retrieved.',
       });
     }
   });

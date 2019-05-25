@@ -96,19 +96,29 @@ router.post('/', async (req, res) => {
 
 // POST create new comment for post obj with speific id as packaged via request body
 router.post('/:id/comments', async (req, res) => {
-    const commentInfo = {...req.body, id: req.params.id };
+    const commentInfo = {...req.body, post_id: req.params.id };
   
-  
-    try {
-      const saved =  await Posts.insertComment(commentInfo);
-      res.status(201).json(saved);
-    } catch (err) {
-      res.status(500).json({
-        message: 'failed to saved message',
-        err
-      })
+    if(commentInfo.text) {
+        try {
+            const saved =  await Posts.insertComment(commentInfo);
+            res.status(201).json(commentInfo);
+        } catch (err) {
+            res.status(500).json({
+                error: 'There was an error while saving the comment to the database'
+            })
+        }
+
+    } else {
+        res.status(400).json({
+            errorMessage: "Please provide text for the comment."
+        })
     }
+
+ 
   
+
+
+
   });
 
 

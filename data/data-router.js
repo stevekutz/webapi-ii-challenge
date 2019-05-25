@@ -146,13 +146,46 @@ router.delete('/:id', async (req, res) => {
         });
         }
     }
-    
+
   });
 
 
 // PUT updates post with specific id as packaged via request body, return UPDATED post array
         // Object.assign  NOT spread !!!!
+  router.put('/:id', async (req, res) => {
 
+    const post = req.body; 
+
+    if(post.title && post.contents){
+        try {
+        const postUpdate = await Posts.update(req.params.id, req.body);
+        if (postUpdate) {
+            res.status(200).json(post);
+        } else {
+            res.status(404).json({ 
+                message: 'The post with the specified id does not exist.' 
+            });
+        }
+        } catch (error) {
+        // log error to database
+        console.log(error);
+        res.status(500).json({
+            message: 'Error updating the hub',
+        });
+        }
+
+
+    } else {
+        res.status(400).json({
+            errorMessage: "please provide title and contents for the post."
+        })
+    }
+
+
+
+
+
+  });
 
 
 

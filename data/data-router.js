@@ -44,13 +44,30 @@ router.get('/:id', async (req, res) => {
     }
   });
 
-
-// GET all comments of post obj with specific id
-
-
-
 // POST create new post from as packaged via request body
-
+router.post('/', async (req, res) => {
+    
+    const newPost = req.body;  
+    
+  //  if(newPost.title && newPost.contents) {
+    if(newPost.title && newPost.contents) {
+      try {
+        const post = await Posts.insert(req.body);    // looked in db.js to see that 'insert' needed
+        res.status(201).json(newPost);
+      } catch (error) {
+        // log error to database
+        console.log(error);
+        res.status(500).json({
+          error: 'There was an error while saving the post to the database',
+        });
+      }
+    } else {
+      res.status(400).json({
+        errorMessage: 'Please provide title and contents for the post'
+      });
+    }
+    
+  });
 
 
 // POST create new comment for post obj with speific id as packaged via request body

@@ -1,7 +1,9 @@
+// server.js
+
 const express = require('express'); // creates express app
 
 // ADD this here after creating data-router.js
-const PostsRouter = require('./data/data-router.js');
+const PostsRouter = require('./data/posts-router.js');
 
 const server = express();   // this creates express application !!!!! 
 server.use(express.json());   // DONT FORGET THIS !!!!!

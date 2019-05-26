@@ -1,3 +1,5 @@
+//data-router.js
+
 // 1) we MUST add expresss here
 const express = require('express');
 
@@ -27,8 +29,11 @@ router.get('/', async (req, res) => {
 
 // GET post obj with specific id
 router.get('/:id', async (req, res) => {
-    try {
-      const post = await Posts.findById(req.params.id); // modify Posts to get 500 err
+   
+  const {id} = req.params;
+  
+  try {
+      const post = await Posts.findById(id); // modify Posts to get 500 err
       
       if (post.length) { // HAD to add this to get 404 to show up, was getting 200 & [] for bad id
         res.status(200).json(post);
@@ -76,7 +81,8 @@ router.post('/', async (req, res) => {
   //  if(newPost.title && newPost.contents) {
     if(newPost.title && newPost.contents) {
       try {
-        const post = await Posts.insert(req.body);    // looked in db.js to see that 'insert' needed
+        // const post = await Posts.insert(req.body);
+        const post = await Posts.insert(newPost);    // looked in db.js to see that 'insert' needed
         res.status(201).json(newPost);
       } catch (error) {
         // log error to database
@@ -96,7 +102,9 @@ router.post('/', async (req, res) => {
 
 // POST create new comment for post obj with speific id as packaged via request body
 router.post('/:id/comments', async (req, res) => {
-    const commentInfo = {...req.body, post_id: req.params.id };
+    
+    const {id} = req.params; // makes id    same as req.params.id
+    const commentInfo = {...req.body, post_id: id };
   
     if(commentInfo.text) {
         try {
@@ -114,22 +122,18 @@ router.post('/:id/comments', async (req, res) => {
         })
     }
 
- 
-  
-
-
-
-  });
+});
 
 
 // DELETE(tricky,extra calls!) Removes post with specified id and RETURNS deleted post 
 router.delete('/:id', async (req, res) => {
 
-    const post = await Posts.findById(req.params.id);
+    const {id} = req.params; // makes id    same as req.params.id
+    const post = await Posts.findById(id);
 
     if(post){
         try {
-        const count = await Posts.remove(req.params.id);
+        const count = await Posts.remove(id);
 
         if (count > 0) {
             res.status(200).json(post);
@@ -149,16 +153,18 @@ router.delete('/:id', async (req, res) => {
 
   });
 
-
 // PUT updates post with specific id as packaged via request body, return UPDATED post array
         // Object.assign  NOT spread !!!!
   router.put('/:id', async (req, res) => {
 
     const post = req.body; 
+    const {id} = req.params; // makes id    same as req.params.id
 
     if(post.title && post.contents){
         try {
-        const postUpdate = await Posts.update(req.params.id, req.body);
+    //    const postUpdate = await Posts.update(req.params.id, req.body);
+        const postUpdate = await Posts.update(id, post);
+        
         if (postUpdate) {
             res.status(200).json(post);
         } else {
@@ -174,20 +180,13 @@ router.delete('/:id', async (req, res) => {
         });
         }
 
-
     } else {
         res.status(400).json({
             errorMessage: "please provide title and contents for the post."
         })
     }
 
-
-
-
-
   });
-
-
 
 
 // MUST EXPORT
